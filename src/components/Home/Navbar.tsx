@@ -1,17 +1,13 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import MaxWidthWrapper from "./MaxWidthWrapper";
-import { buttonVariants } from "./ui/button";
+import MaxWidthWrapper from "../MaxWidthWrapper";
+import { buttonVariants } from "../ui/button";
 
 export default async function Navbar() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
   const isAdmin = user?.email === process.env.ADMIN_EMAIL;
-
-  console.log(user);
-  console.log(isAdmin);
-  console.log(process.env.ADMIN_EMAIL);
 
   return (
     <nav className="sticky inset-x-0 top-0 z-[100] h-14 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
