@@ -14,7 +14,7 @@ export const ourFileRouter = {
     .middleware(async ({ input }) => {
       return { input };
     })
-    .onUploadComplete(async ({ metadata }) => {
+    .onUploadComplete(async ({ metadata, file }) => {
       const { configId } = metadata.input;
       return { configId };
     }),
