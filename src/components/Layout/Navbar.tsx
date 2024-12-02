@@ -5,9 +5,10 @@ import MaxWidthWrapper from "../MaxWidthWrapper";
 import { buttonVariants } from "../ui/button";
 
 export default async function Navbar() {
-  const { getUser } = getKindeServerSession();
+  const { getUser, getRoles } = getKindeServerSession();
   const user = await getUser();
-  const isAdmin = user?.email === process.env.ADMIN_EMAIL;
+  const roles = await getRoles();
+  const isAdmin = roles?.some((role) => role.key === "admin");
 
   return (
     <nav className="sticky inset-x-0 top-0 z-[100] h-14 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
@@ -16,7 +17,7 @@ export default async function Navbar() {
           <Link href="/" className="z-40 flex font-semibold">
             case<span className="text-green-600">Cobra</span>
           </Link>
-          <div className="flex h-full items-center space-x-4">
+          <div className="flex h-full items-center space-x-3">
             {user ? (
               <>
                 {isAdmin ? (
@@ -67,7 +68,7 @@ export default async function Navbar() {
                   })}
                 >
                   Create case
-                  <ArrowRight className="ml-1.5 size-5" />
+                  <ArrowRight className="ml-1 size-5" />
                 </Link>
               </>
             )}
