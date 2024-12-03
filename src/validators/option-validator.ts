@@ -1,19 +1,24 @@
 import { PRODUCT_PRICES } from "@/config/products";
 
-export const COLORS = [
-  { label: "Black", value: "black", twbg: "bg-zinc-900", twborder: "border-zinc-900" },
-  {
-    label: "Blue",
-    value: "blue",
-    twbg: "bg-blue-950",
-    twborder: "border-blue-950",
-  },
-  { label: "Rose", value: "rose", twbg: "bg-rose-950", twborder: "border-rose-950" },
-] as const;
+// "bg-zinc-900 border-zinc-900 bg-blue-950 border-blue-950 bg-rose-950 border-rose-950";
+
+export const COLORS = {
+  optionsName: "colors",
+  selectableOptions: [
+    { label: "Black", value: "black", twbg: "bg-zinc-900", twborder: "border-zinc-900" },
+    {
+      label: "Blue",
+      value: "blue",
+      twbg: "bg-blue-950",
+      twborder: "border-blue-950",
+    },
+    { label: "Rose", value: "rose", twbg: "bg-rose-950", twborder: "border-rose-950" },
+  ],
+} as const;
 
 export const MODELS = {
-  name: "models",
-  options: [
+  optionsName: "models",
+  selectableOptions: [
     { label: "iPhone 14", value: "iphone14" },
     { label: "iPhone 15", value: "iphone15" },
     { label: "iPhone 16", value: "iphone16" },
@@ -21,8 +26,8 @@ export const MODELS = {
 } as const;
 
 export const MATERIALS = {
-  name: "material",
-  options: [
+  optionsName: "material",
+  selectableOptions: [
     {
       label: "Silicone",
       value: "silicone",
@@ -39,8 +44,8 @@ export const MATERIALS = {
 };
 
 export const FINISHES = {
-  name: "finish",
-  options: [
+  optionsName: "finish",
+  selectableOptions: [
     {
       label: "Smooth Finish",
       value: "smooth",
