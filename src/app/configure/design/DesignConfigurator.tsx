@@ -25,7 +25,6 @@ interface DesignConfiguratorProps {
   imageUrl: string;
   imageDimensions: { width: number; height: number };
 }
-
 // "bg-zinc-900 border-zinc-900 bg-blue-950 border-blue-950 bg-rose-950 border-rose-950";
 
 export default function DesignConfigurator({
@@ -33,6 +32,10 @@ export default function DesignConfigurator({
   imageUrl,
   imageDimensions,
 }: DesignConfiguratorProps) {
+  const defaultX = 150;
+  const defaultY = 205;
+  const renderRatio = 4;
+
   const [options, setOptions] = useState<{
     color: (typeof COLORS.selectableOptions)[number];
     model: (typeof MODELS.selectableOptions)[number];
@@ -44,13 +47,32 @@ export default function DesignConfigurator({
     material: MATERIALS.selectableOptions[0],
     finish: FINISHES.selectableOptions[0],
   });
+
+  const [renderedDimensions, setRenderedDimensions] = useState({
+    width: imageDimensions.width / renderRatio,
+    height: imageDimensions.height / renderRatio,
+  });
+  const [renderedPosition, setRenderedPosition] = useState({
+    x: defaultX,
+    y: defaultY,
+  });
+
+  const phoneWidth = 896;
+  const phoneHeight = 1831;
+  const aspectRatioClass = `aspect-[${phoneWidth}/${phoneHeight}]`;
+
+  async function saveConfiguration() {
+    try {
+    } catch {}
+  }
+
   return (
     <div className="relative mb-20 mt-20 grid grid-cols-1 pb-20 lg:grid-cols-3">
       <div className="relative col-span-2 flex h-[37.5rem] w-full max-w-4xl items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-gray-300 p-2 text-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
-        <div className="pointer-events-none relative aspect-[896/1831] w-60 bg-opacity-50">
+        <div className={`pointer-events-none relative w-60 bg-opacity-50 ${aspectRatioClass}`}>
           <AspectRatio
-            ratio={896 / 1831}
-            className="pointer-events-none relative z-30 aspect-[896/1831] w-full"
+            ratio={phoneWidth / phoneHeight}
+            className={`pointer-events-none relative z-30 w-full ${aspectRatioClass}`}
           >
             <Image
               alt="phone image"
@@ -69,10 +91,10 @@ export default function DesignConfigurator({
         </div>
         <Rnd
           default={{
-            x: 150,
-            y: 295,
-            height: imageDimensions.height / 4,
-            width: imageDimensions.width / 4,
+            x: defaultX,
+            y: defaultY,
+            height: imageDimensions.height / renderRatio,
+            width: imageDimensions.width / renderRatio,
           }}
           lockAspectRatio
           resizeHandleComponent={{
@@ -86,6 +108,17 @@ export default function DesignConfigurator({
             bottomLeft: "z-50",
             topLeft: "z-50",
             topRight: "z-50",
+          }}
+          onResizeStop={(_, __, ref, ___, { x, y }) => {
+            setRenderedDimensions({
+              height: parseInt(ref.style.height.slice(0, -2)),
+              width: parseInt(ref.style.width.slice(0, -2)),
+            });
+            setRenderedPosition({ x, y });
+          }}
+          onDragStop={(_, data) => {
+            const { x, y }: { x: number; y: number } = data;
+            setRenderedPosition({ x, y });
           }}
           className="absolute z-20 border-[3px] border-primary"
         >
