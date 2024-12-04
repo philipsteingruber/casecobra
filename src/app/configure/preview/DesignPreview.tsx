@@ -2,12 +2,12 @@
 // "bg-zinc-900 border-zinc-900 bg-blue-950 border-blue-950 bg-rose-950 border-rose-950";
 
 import Phone from "@/components/Home/Phone";
+import { Button } from "@/components/ui/button";
 import { BASE_PRICE } from "@/config/products";
 import { cn, formatPrice } from "@/lib/utils";
 import { COLORS, FINISHES, MATERIALS, MODELS } from "@/validators/option-validator";
 import { Configuration } from "@prisma/client";
-import { Check } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowRight, Check } from "lucide-react";
 
 export default function DesignPreview({ configuration }: { configuration: Configuration }) {
   const { color, model, material, finish, croppedImageUrl } = configuration;
@@ -91,6 +91,11 @@ export default function DesignPreview({ configuration }: { configuration: Config
                 <p className="font-semibold text-gray-900">{formatPrice(totalPrice / 100)}</p>
               </div>
             </div>
+          </div>
+          <div className="mt-8 flex justify-end pb-12">
+            <Button className="px-4 sm:px-6 lg:px-8">
+              Check out <ArrowRight className="size-4 ml-1.5 inline" />
+            </Button>
           </div>
         </div>
       </div>
