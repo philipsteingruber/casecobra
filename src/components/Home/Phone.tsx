@@ -14,17 +14,10 @@ export default function Phone({ imgSrc, className, dark = false, ...props }: Pho
         className="pointer-events-none z-50 select-none"
         src={dark ? "/phone-template-dark-edges.png" : "/phone-template-white-edges.png"}
         alt="Phone image"
-        height={1831}
-        width={896}
+        fill
       />
       <div className="absolute inset-0 -z-10">
-        <Image
-          src={imgSrc}
-          alt="Your image"
-          height={428}
-          width={619}
-          className="object-cover min-w-full min-h-full"
-        />
+        <Image src={imgSrc} alt="Your image" fill className="object-cover min-w-full min-h-full" />
       </div>
     </div>
   );
