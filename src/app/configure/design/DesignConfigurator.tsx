@@ -18,7 +18,7 @@ import { cn, formatPrice } from "@/lib/utils";
 import { COLORS, FINISHES, MATERIALS, MODELS } from "@/validators/option-validator";
 import { Description, Radio, RadioGroup } from "@headlessui/react";
 import { ArrowRight, CheckIcon, ChevronsUpDown } from "lucide-react";
-import Image from "next/image";
+import NextImage from "next/image";
 import { useRef, useState } from "react";
 import { Rnd } from "react-rnd";
 
@@ -123,7 +123,6 @@ export default function DesignConfigurator({
 
       await startUpload([file], { configId });
     } catch (err) {
-      console.log(err)
       toast({
         title: "Something went wrong",
         description: "File upload failed",
@@ -144,7 +143,7 @@ export default function DesignConfigurator({
             className={`pointer-events-none relative z-30 w-full ${aspectRatioClass}`}
             ref={phoneCaseRef}
           >
-            <Image
+            <NextImage
               alt="phone image"
               src="/phone-template.png"
               className="pointer-events-none z-30 select-none"
@@ -193,7 +192,7 @@ export default function DesignConfigurator({
           className="absolute z-20 border-[3px] border-primary"
         >
           <div className="relative h-full w-full">
-            <Image src={imageUrl} fill alt="your image" className="pointer-events-none" />
+            <NextImage src={imageUrl} fill alt="your image" className="pointer-events-none" />
           </div>
         </Rnd>
       </div>
