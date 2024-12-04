@@ -106,7 +106,7 @@ export default function DesignConfigurator({
       const topOffset = caseTop - containerTop;
 
       const actualX = renderedPosition.x - leftOffset;
-      const actualY = (renderedPosition.y = topOffset);
+      const actualY = renderedPosition.y - topOffset;
 
       const canvas = document.createElement("canvas");
       canvas.width = width;
