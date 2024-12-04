@@ -18,7 +18,13 @@ export default function Phone({ imgSrc, className, dark = false, ...props }: Pho
         width={896}
       />
       <div className="absolute inset-0 -z-10">
-        <Image src={imgSrc} alt="Your image" height={428} width={619} />
+        <Image
+          src={imgSrc}
+          alt="Your image"
+          height={428}
+          width={619}
+          className="object-cover min-w-full min-h-full"
+        />
       </div>
     </div>
   );
