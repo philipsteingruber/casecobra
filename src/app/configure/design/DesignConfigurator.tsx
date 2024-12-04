@@ -12,12 +12,14 @@ import {
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { BASE_PRICE } from "@/config/products";
+import { useToast } from "@/hooks/use-toast";
+import { useUploadThing } from "@/lib/uploadthing";
 import { cn, formatPrice } from "@/lib/utils";
 import { COLORS, FINISHES, MATERIALS, MODELS } from "@/validators/option-validator";
 import { Description, Radio, RadioGroup } from "@headlessui/react";
 import { ArrowRight, CheckIcon, ChevronsUpDown } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Rnd } from "react-rnd";
 
 interface DesignConfiguratorProps {
@@ -48,6 +50,7 @@ export default function DesignConfigurator({
     finish: FINISHES.selectableOptions[0],
   });
 
+  const { toast } = useToast();
   const [renderedDimensions, setRenderedDimensions] = useState({
     width: imageDimensions.width / renderRatio,
     height: imageDimensions.height / renderRatio,
@@ -57,22 +60,87 @@ export default function DesignConfigurator({
     y: defaultY,
   });
 
+  const phoneCaseRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { startUpload } = useUploadThing("imageUploader");
+
   const phoneWidth = 896;
   const phoneHeight = 1831;
   const aspectRatioClass = `aspect-[${phoneWidth}/${phoneHeight}]`;
 
-  async function saveConfiguration() {
+  function base64ToBlob(base64Data: string, mimeType: string) {
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let index = 0; index < byteNumbers.length; index++) {
+      byteNumbers[index] = byteCharacters.charCodeAt(index);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: mimeType });
+  }
+
+  async function submitConfiguration() {
     try {
-    } catch {}
+      const {
+        left: caseLeft,
+        top: caseTop,
+        width,
+        height,
+      } = phoneCaseRef.current!.getBoundingClientRect();
+      const { left: containerLeft, top: containerTop } =
+        containerRef.current!.getBoundingClientRect();
+
+      const leftOffset = caseLeft - containerLeft;
+      const topOffset = caseTop - containerTop;
+
+      const actualX = renderedPosition.x - leftOffset;
+      const actualY = (renderedPosition.y = topOffset);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+
+      const userImage = new Image();
+      userImage.crossOrigin = "anonymous";
+      userImage.src = imageUrl;
+      await new Promise((resolve) => (userImage.onload = resolve));
+
+      ctx!.drawImage(
+        userImage,
+        actualX,
+        actualY,
+        renderedDimensions.width,
+        renderedDimensions.height
+      );
+
+      const base64 = canvas.toDataURL();
+      const base64Data = base64.split(",")[1];
+
+      const blob = base64ToBlob(base64Data, "image/png");
+      const file = new File([blob], "filename.png", { type: "image/png" });
+
+      await startUpload([file], { configId });
+    } catch (err) {
+      toast({
+        title: "Something went wrong",
+        description: "File upload failed",
+        variant: "destructive",
+      });
+    }
   }
 
   return (
     <div className="relative mb-20 mt-20 grid grid-cols-1 pb-20 lg:grid-cols-3">
-      <div className="relative col-span-2 flex h-[37.5rem] w-full max-w-4xl items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-gray-300 p-2 text-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+      <div
+        className="relative col-span-2 flex h-[37.5rem] w-full max-w-4xl items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-gray-300 p-2 text-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        ref={containerRef}
+      >
         <div className={`pointer-events-none relative w-60 bg-opacity-50 ${aspectRatioClass}`}>
           <AspectRatio
             ratio={phoneWidth / phoneHeight}
             className={`pointer-events-none relative z-30 w-full ${aspectRatioClass}`}
+            ref={phoneCaseRef}
           >
             <Image
               alt="phone image"
@@ -326,7 +394,7 @@ export default function DesignConfigurator({
                 Subtotal:{" "}
                 {formatPrice((BASE_PRICE + options.finish.price + options.material.price) / 100)}
               </p>
-              <Button>
+              <Button onClick={submitConfiguration}>
                 Continue
                 <ArrowRight className="ml-1.5 inline size-4" />
               </Button>
