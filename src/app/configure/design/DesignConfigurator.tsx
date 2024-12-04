@@ -123,6 +123,7 @@ export default function DesignConfigurator({
 
       await startUpload([file], { configId });
     } catch (err) {
+      console.log(err)
       toast({
         title: "Something went wrong",
         description: "File upload failed",
