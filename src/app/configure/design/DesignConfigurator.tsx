@@ -101,9 +101,10 @@ export default function DesignConfigurator({
       canvas.height = height;
       const ctx = canvas.getContext("2d");
 
-      const userImage = new Image();
-      userImage.crossOrigin = "anonymous";
-      userImage.src = imageUrl;
+      const userImage = new (Image as any)({
+        crossOrigin: "anonymous",
+        src: imageUrl,
+      });
       await new Promise((resolve) => (userImage.onload = resolve));
 
       ctx!.drawImage(
