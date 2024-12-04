@@ -14,12 +14,22 @@ export default function DesignPreview({ configuration }: { configuration: Config
   const modelLabel = MODELS.selectableOptions.find(
     (supportedModel) => supportedModel.value === model
   )!.label;
+
   const materialLabel = MATERIALS.selectableOptions.find(
     (supportedMaterial) => supportedMaterial.value === material
   )!.label;
+  const materialPrice = MATERIALS.selectableOptions.find(
+    (selectableOption) => selectableOption.value === material
+  )!.price;
+
   const finishLabel = FINISHES.selectableOptions.find(
     (supportedFinish) => supportedFinish.value === finish
   )!.label;
+  const finishPrice = FINISHES.selectableOptions.find(
+    (selectableOption) => selectableOption.value === finish
+  )!.price;
+
+  const totalPrice = BASE_PRICE + materialPrice + finishPrice;
 
   const twbg = COLORS.selectableOptions.find(
     (supportedColor: (typeof COLORS.selectableOptions)[number]) => supportedColor.value === color
@@ -66,27 +76,20 @@ export default function DesignPreview({ configuration }: { configuration: Config
               {finish !== "smooth" ? (
                 <div className="flex items-center justify-between py-1 mt-2">
                   <p className="text-gray-600">{finishLabel}</p>
-                  <p className="font-medium text-gray-900">
-                    {formatPrice(
-                      FINISHES.selectableOptions.find(
-                        (selectableOption) => selectableOption.value === finish
-                      )!.price / 100
-                    )}
-                  </p>
+                  <p className="font-medium text-gray-900">{formatPrice(finishPrice / 100)}</p>
                 </div>
               ) : null}
               {material !== "silicone" ? (
                 <div className="flex items-center justify-between py-1 mt-2">
                   <p className="text-gray-600">{materialLabel}</p>
-                  <p className="font-medium text-gray-900">
-                    {formatPrice(
-                      MATERIALS.selectableOptions.find(
-                        (selectableOption) => selectableOption.value === material
-                      )!.price / 100
-                    )}
-                  </p>
+                  <p className="font-medium text-gray-900">{formatPrice(materialPrice / 100)}</p>
                 </div>
               ) : null}
+              <div className="my-2 h-px bg-gray-200" aria-hidden />
+              <div className="flex items-center justify-between py-2">
+                <p className="font-semibold text-gray-900">Order total</p>
+                <p className="font-semibold text-gray-900">{formatPrice(totalPrice / 100)}</p>
+              </div>
             </div>
           </div>
         </div>
