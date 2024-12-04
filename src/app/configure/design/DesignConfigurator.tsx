@@ -101,10 +101,9 @@ export default function DesignConfigurator({
       canvas.height = height;
       const ctx = canvas.getContext("2d");
 
-      const userImage = new (Image as any)({
-        crossOrigin: "anonymous",
-        src: imageUrl,
-      });
+      const userImage = new Image();
+      userImage.crossOrigin = "anonymous";
+      userImage.src = imageUrl;
       await new Promise((resolve) => (userImage.onload = resolve));
 
       ctx!.drawImage(
@@ -395,7 +394,7 @@ export default function DesignConfigurator({
                 Subtotal:{" "}
                 {formatPrice((BASE_PRICE + options.finish.price + options.material.price) / 100)}
               </p>
-              <Button onClick={submitConfiguration}>
+              <Button onClick={() => submitConfiguration()}>
                 Continue
                 <ArrowRight className="ml-1.5 inline size-4" />
               </Button>
