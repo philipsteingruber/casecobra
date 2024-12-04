@@ -14,13 +14,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { BASE_PRICE } from "@/config/products";
 import { useToast } from "@/hooks/use-toast";
 import { useUploadThing } from "@/lib/uploadthing";
-import { cn, formatPrice } from "@/lib/utils";
+import { base64ToBlob, cn, formatPrice } from "@/lib/utils";
 import { COLORS, FINISHES, MATERIALS, MODELS } from "@/validators/option-validator";
 import { Description, Radio, RadioGroup } from "@headlessui/react";
+import { useMutation } from "@tanstack/react-query";
 import { ArrowRight, CheckIcon, ChevronsUpDown } from "lucide-react";
 import NextImage from "next/image";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { Rnd } from "react-rnd";
+import { saveConfigurationArgs, uploadConfigurationToDb } from "./actions";
 
 interface DesignConfiguratorProps {
   configId: string;
@@ -51,6 +54,25 @@ export default function DesignConfigurator({
   });
 
   const { toast } = useToast();
+
+  const router = useRouter();
+  const { mutate: submitConfiguration } = useMutation({
+    mutationKey: ["save-config"],
+    mutationFn: async (args: saveConfigurationArgs) => {
+      await Promise.all([uploadConfigurationToDb(args), saveCroppedImage()]);
+    },
+    onError: () => {
+      toast({
+        title: "Something went wrong",
+        description: "There was an error on our end. Please try again.",
+        variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      router.push(`/configure/preview?id=${configId}`);
+    },
+  });
+
   const [renderedDimensions, setRenderedDimensions] = useState({
     width: imageDimensions.width / renderRatio,
     height: imageDimensions.height / renderRatio,
@@ -69,17 +91,7 @@ export default function DesignConfigurator({
   const phoneHeight = 1831;
   const aspectRatioClass = `aspect-[${phoneWidth}/${phoneHeight}]`;
 
-  function base64ToBlob(base64Data: string, mimeType: string) {
-    const byteCharacters = atob(base64Data);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let index = 0; index < byteNumbers.length; index++) {
-      byteNumbers[index] = byteCharacters.charCodeAt(index);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    return new Blob([byteArray], { type: mimeType });
-  }
-
-  async function submitConfiguration() {
+  async function saveCroppedImage() {
     try {
       const {
         left: caseLeft,
@@ -394,7 +406,17 @@ export default function DesignConfigurator({
                 Subtotal:{" "}
                 {formatPrice((BASE_PRICE + options.finish.price + options.material.price) / 100)}
               </p>
-              <Button onClick={() => submitConfiguration()}>
+              <Button
+                onClick={() =>
+                  submitConfiguration({
+                    configId,
+                    color: options.color.value,
+                    finish: options.finish.value,
+                    material: options.material.value,
+                    model: options.model.value,
+                  })
+                }
+              >
                 Continue
                 <ArrowRight className="ml-1.5 inline size-4" />
               </Button>

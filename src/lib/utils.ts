@@ -13,3 +13,13 @@ export function formatPrice(price: number) {
 
   return formatter.format(price);
 }
+
+export function base64ToBlob(base64Data: string, mimeType: string) {
+  const byteCharacters = atob(base64Data);
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let index = 0; index < byteNumbers.length; index++) {
+    byteNumbers[index] = byteCharacters.charCodeAt(index);
+  }
+  const byteArray = new Uint8Array(byteNumbers);
+  return new Blob([byteArray], { type: mimeType });
+}
