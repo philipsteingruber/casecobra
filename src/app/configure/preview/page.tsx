@@ -11,12 +11,12 @@ interface PageProps {
 export default async function Page({ searchParams }: PageProps) {
   const { id } = searchParams;
   if (!id || typeof id !== "string") {
-    return notFound;
+    return notFound();
   }
 
   const configuration = await db.configuration.findUnique({ where: { id } });
   if (!configuration || !configuration.croppedImageUrl) {
-    return notFound;
+    return notFound();
   }
 
   return <DesignPreview configuration={configuration} />;

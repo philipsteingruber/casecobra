@@ -18,7 +18,7 @@ export default async function DesignPage({ searchParams }: PageProps) {
     where: { id },
   });
   if (!configuration) {
-    return notFound;
+    return notFound();
   }
 
   const { imageUrl, width, height, id: configId } = configuration;
